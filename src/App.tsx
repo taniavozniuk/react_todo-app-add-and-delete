@@ -21,6 +21,12 @@ export const App: React.FC = () => {
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (inputRef.current && tempTodo === null) {
+      inputRef.current.focus();
+    }
+  }, [tempTodo]);
+
   //додававння title, post
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
