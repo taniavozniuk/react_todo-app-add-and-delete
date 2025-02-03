@@ -7,6 +7,8 @@ import { Todo } from './types/Todo';
 import { USER_ID } from './api/todos';
 import { ErrorMessange } from './component/ErrorMessange';
 import { Statys } from './types/statys';
+import { TodoList } from './component/TodoList';
+import { Footer } from './component/Footer';
 
 export const App: React.FC = () => {
   // if (!USER_ID) {
@@ -98,6 +100,10 @@ export const App: React.FC = () => {
     setTitle(event.target.value);
   };
 
+  const handleClearCompleted = () => {
+    setTodos(prevTodos => prevTodos.filter(todo => !todo.completed));
+  };
+
   // стан todos
   const toggleTodo = (id: number) => {
     setTodos(prevTodos =>
@@ -161,51 +167,11 @@ export const App: React.FC = () => {
           </form>
         </header>
 
-        <section className="todoapp__main" data-cy="TodoList">
-          {filteredTodos.map(todo => (
-            <div
-              data-cy="Todo"
-              className={`todo ${todo.completed ? 'completed' : ''} ${todo.id === 0 ? 'temp' : ''} `}
-              key={todo.id}
-            >
-              <label className="todo__status-label">
-                <input
-                  data-cy="TodoStatus"
-                  type="checkbox"
-                  className="todo__status"
-                  checked={todo.completed}
-                  onChange={() => toggleTodo(todo.id)}
-                  disabled={todo.id === 0} //!!!
-                />
-              </label>
-
-              <span data-cy="TodoTitle" className="todo__title">
-                {todo.title}
-              </span>
-
-              {/* Remove button appears only on hover */}
-              <button
-                type="button"
-                className="todo__remove"
-                data-cy="TodoDelete"
-                disabled={todo.id === 0} //!!!
-                onClick={() => {
-                  handleDelete(todo.id);
-                }}
-              >
-                ×
-              </button>
-
-              {/* overlay will cover the todo while it is being deleted or updated */}
-              {todo.id === 0 && (
-                <div data-cy="TodoLoader" className="modal overlay">
-                  <div className="modal-background has-background-white-ter" />
-                  <div className="loader" />
-                </div>
-              )}
-            </div>
-          ))}
-        </section>
+        <TodoList
+          filteredTodos={filteredTodos}
+          toggleTodo={toggleTodo}
+          handleDelete={handleDelete}
+        />
 
         {tempTodo && (
           <div data-cy="Todo" className="todo">
@@ -227,51 +193,13 @@ export const App: React.FC = () => {
         )}
         {/* Hide the footer if there are no todos */}
         {todos.length > 0 && (
-          <footer className="todoapp__footer" data-cy="Footer">
-            <span className="todo-count" data-cy="TodosCounter">
-              {itemLeft} items left
-            </span>
-
-            {/* Active link should have the 'selected' class */}
-            <nav className="filter" data-cy="Filter">
-              <a
-                href="#/"
-                className={`filter__link ${filter === Statys.ALL ? 'selected' : ''}`}
-                data-cy="FilterLinkAll"
-                onClick={() => setFilter(Statys.ALL)}
-              >
-                All
-              </a>
-
-              <a
-                href="#/active"
-                className={`filter__link ${filter === Statys.ACTIVE ? 'selected' : ''}`}
-                data-cy="FilterLinkActive"
-                onClick={() => setFilter(Statys.ACTIVE)}
-              >
-                Active
-              </a>
-
-              <a
-                href="#/completed"
-                className={`filter__link ${filter === Statys.COMPLETED ? 'selected' : ''}`}
-                data-cy="FilterLinkCompleted"
-                onClick={() => setFilter(Statys.COMPLETED)}
-              >
-                Completed
-              </a>
-            </nav>
-
-            {/* this button should be disabled if there are no completed todos */}
-            <button
-              type="button"
-              className="todoapp__clear-completed"
-              data-cy="ClearCompletedButton"
-              disabled={!todos.some(todo => todo.completed)}
-            >
-              Clear completed
-            </button>
-          </footer>
+          <Footer
+            todos={todos}
+            itemLeft={itemLeft}
+            filter={filter}
+            setFilter={setFilter}
+            clearCompleted={handleClearCompleted}
+          />
         )}
       </div>
 
