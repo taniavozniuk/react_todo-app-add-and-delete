@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useRef, useState } from 'react';
 // import { UserWarning } from './UserWarning';
-import { getTodos, postTodos } from './api/todos';
+import { deleteTodos, getTodos, postTodos } from './api/todos';
 import { Todo } from './types/Todo';
 import { USER_ID } from './api/todos';
 import { ErrorMessange } from './component/ErrorMessange';
@@ -20,12 +20,17 @@ export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [itemLeft, setItemLeft] = useState(0);
 
   useEffect(() => {
     if (inputRef.current && tempTodo === null) {
       inputRef.current.focus();
     }
   }, [tempTodo]);
+
+  useEffect(() => {
+    setItemLeft(todos.filter(todo => !todo.completed).length);
+  }, [todos]);
 
   //додававння title, post
   const handleSubmit = (event: React.FormEvent) => {
@@ -64,9 +69,29 @@ export const App: React.FC = () => {
         setIsLoading(false);
         setTempTodo(null); //очищую temp після завершення
       });
-    // setTodos(prevTodos => [...prevTodos, newTodo]);
-    // setTitle('');
-    // setError('');
+  };
+
+  const handleDelete = (id: number) => {
+    setIsLoading(true);
+    setError('');
+    const todoDelete = todos.find(todo => todo.id === id);
+
+    if (!todoDelete) {
+      return;
+    }
+
+    deleteTodos(id)
+      .then(() => {
+        setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
+        setError('');
+      })
+      .catch(() => {
+        // setTodos(prevTodos => [...prevTodos, todoToDelete]);
+        setError('Unable to delete a todo');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,9 +135,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="todoapp">
-      <h1 data-cy="TodoLoader" className="todoapp__title">
-        todos
-      </h1>
+      <h1 className="todoapp__title">todos</h1>
 
       <div className="todoapp__content">
         <header className="todoapp__header">
@@ -166,6 +189,9 @@ export const App: React.FC = () => {
                 className="todo__remove"
                 data-cy="TodoDelete"
                 disabled={todo.id === 0} //!!!
+                onClick={() => {
+                  handleDelete(todo.id);
+                }}
               >
                 ×
               </button>
