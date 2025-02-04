@@ -130,30 +130,13 @@ export const App: React.FC = () => {
     setIsLoading(true);
     setError('');
 
-    Promise.allSettled(
-      completedTodos.map(todo => deleteTodos(todo.id).then(() => todo)),
-    )
-      .then(results => {
-        const deletedIds = results
-          .filter(result => result.status === 'fulfilled')
-          .map(result => result.value.id);
+    completedTodos.forEach(todo => {
+      handleDelete(todo.id);
+    });
 
-        setTodos(prevTodos =>
-          prevTodos.filter(todo => !deletedIds.includes(todo.id)),
-        );
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setError('Unable to delete a todo');
-      })
-      .finally(() => {
-        setIsLoading(false);
-        setLoadingTodoId(null);
-
-        setTimeout(() => {
-          inputRef.current?.focus();
-        }, 0);
-      });
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   };
 
   // стан todos
