@@ -25,6 +25,19 @@ export const App: React.FC = () => {
   const [itemLeft, setItemLeft] = useState(0);
   const [loadingTodoId, setLoadingTodoId] = useState<number | null>(null);
 
+  function loadTodos() {
+    // setIsLoadTodos(true);
+
+    getTodos()
+      .then(setTodos)
+      .catch(() => setError('Unable to load todos'));
+    // .finally(() => setIsLoadTodos(false));
+  }
+
+  useEffect(() => {
+    loadTodos();
+  }, []);
+
   useEffect(() => {
     if (inputRef.current && tempTodo === null) {
       inputRef.current.focus();
@@ -96,6 +109,10 @@ export const App: React.FC = () => {
       .finally(() => {
         setIsLoading(false);
         setLoadingTodoId(null);
+
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 0);
       });
   };
 
@@ -129,19 +146,6 @@ export const App: React.FC = () => {
     return true;
   });
 
-  function loadTodos() {
-    // setIsLoadTodos(true);
-
-    getTodos()
-      .then(setTodos)
-      .catch(() => setError('Unable to load todos'));
-    // .finally(() => setIsLoadTodos(false));
-  }
-
-  useEffect(() => {
-    loadTodos();
-  }, []);
-
   return (
     <div className="todoapp">
       <h1 className="todoapp__title">todos</h1>
@@ -160,7 +164,8 @@ export const App: React.FC = () => {
             <input
               data-cy="NewTodoField"
               type="text"
-              className="todoapp__new-todo"
+              className="todoapp__new-todo focused"
+              // className="todoapp__new-todo focused"
               placeholder="Title should not be empty"
               value={title}
               onChange={handleTitleChange}
