@@ -9,7 +9,7 @@ export const ErrorMessange: React.FC<Props> = ({ message, onClose }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
-    }, 300);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [message, onClose]);

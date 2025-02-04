@@ -23,6 +23,7 @@ export const App: React.FC = () => {
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [itemLeft, setItemLeft] = useState(0);
+  const [loadingTodoId, setLoadingTodoId] = useState<number | null>(null);
 
   useEffect(() => {
     if (inputRef.current && tempTodo === null) {
@@ -49,7 +50,7 @@ export const App: React.FC = () => {
     const newTempTodo: Todo = {
       id: 0,
       userId: USER_ID,
-      title,
+      title: title.trim(),
       completed: false,
     };
 
@@ -74,6 +75,7 @@ export const App: React.FC = () => {
   };
 
   const handleDelete = (id: number) => {
+    setLoadingTodoId(id);
     setIsLoading(true);
     setError('');
     const todoDelete = todos.find(todo => todo.id === id);
@@ -93,6 +95,7 @@ export const App: React.FC = () => {
       })
       .finally(() => {
         setIsLoading(false);
+        setLoadingTodoId(null);
       });
   };
 
@@ -171,6 +174,7 @@ export const App: React.FC = () => {
           filteredTodos={filteredTodos}
           toggleTodo={toggleTodo}
           handleDelete={handleDelete}
+          loadingTodoId={loadingTodoId}
         />
 
         {tempTodo && (
@@ -190,6 +194,9 @@ export const App: React.FC = () => {
               <div className="loader" />
             </div>
           </div>
+          // className={classNames('modal overlay', {
+          //             'is-active': loadingTodoId === 0,
+          //           // })}
         )}
         {/* Hide the footer if there are no todos */}
         {todos.length > 0 && (
