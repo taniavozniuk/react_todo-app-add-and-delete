@@ -121,7 +121,39 @@ export const App: React.FC = () => {
   };
 
   const handleClearCompleted = () => {
-    setTodos(prevTodos => prevTodos.filter(todo => !todo.completed));
+    const completedTodos = todos.filter(todo => todo.completed);
+
+    if (completedTodos.length === 0) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    Promise.allSettled(
+      completedTodos.map(todo => deleteTodos(todo.id).then(() => todo)),
+    )
+      .then(results => {
+        const deletedIds = results
+          .filter(result => result.status === 'fulfilled')
+          .map(result => result.value.id);
+
+        setTodos(prevTodos =>
+          prevTodos.filter(todo => !deletedIds.includes(todo.id)),
+        );
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setError('Unable to delete a todo');
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setLoadingTodoId(null);
+
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 0);
+      });
   };
 
   // стан todos
