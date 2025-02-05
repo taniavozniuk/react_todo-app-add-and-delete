@@ -9,6 +9,7 @@ import { Status } from './types/statys';
 import { TodoList } from './component/TodoList';
 import { Footer } from './component/Footer';
 import { TempTodo } from './component/TempTodo';
+import { Header } from './component/Header';
 
 export const App: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -154,28 +155,13 @@ export const App: React.FC = () => {
       <h1 className="todoapp__title">todos</h1>
 
       <div className="todoapp__content">
-        <header className="todoapp__header">
-          {/* this button should have `active` class only if all todos are completed */}
-          <button
-            type="button"
-            className="todoapp__toggle-all active"
-            data-cy="ToggleAllButton"
-          />
-
-          {/* Add a todo on form submit */}
-          <form onSubmit={handleSubmit}>
-            <input
-              data-cy="NewTodoField"
-              type="text"
-              className="todoapp__new-todo focused"
-              placeholder="Title should not be empty"
-              value={title}
-              onChange={handleTitleChange}
-              disabled={isLoading}
-              ref={inputRef}
-            />
-          </form>
-        </header>
+        <Header
+          handleSubmit={handleSubmit}
+          title={title}
+          handleTitleChange={handleTitleChange}
+          isLoading={isLoading}
+          inputRef={inputRef}
+        />
 
         <TodoList
           filteredTodos={filteredTodos}
