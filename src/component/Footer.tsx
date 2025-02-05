@@ -1,11 +1,11 @@
 import React from 'react';
 import { Todo } from '../types/Todo';
-import { Statys } from '../types/statys';
+import { Status } from '../types/statys';
 
 interface Props {
   itemLeft: number;
-  filter: Statys;
-  setFilter: (filter: Statys) => void;
+  filter: Status;
+  setFilter: (filter: Status) => void;
   todos: Todo[];
   clearCompleted: () => void;
 }
@@ -26,27 +26,27 @@ export const Footer: React.FC<Props> = ({
     <nav className="filter" data-cy="Filter">
       <a
         href="#/"
-        className={`filter__link ${filter === Statys.ALL ? 'selected' : ''}`}
+        className={`filter__link ${filter === Status.ALL ? 'selected' : ''}`}
         data-cy="FilterLinkAll"
-        onClick={() => setFilter(Statys.ALL)}
+        onClick={() => setFilter(Status.ALL)}
       >
         All
       </a>
 
       <a
         href="#/active"
-        className={`filter__link ${filter === Statys.ACTIVE ? 'selected' : ''}`}
+        className={`filter__link ${filter === Status.ACTIVE ? 'selected' : ''}`}
         data-cy="FilterLinkActive"
-        onClick={() => setFilter(Statys.ACTIVE)}
+        onClick={() => setFilter(Status.ACTIVE)}
       >
         Active
       </a>
 
       <a
         href="#/completed"
-        className={`filter__link ${filter === Statys.COMPLETED ? 'selected' : ''}`}
+        className={`filter__link ${filter === Status.COMPLETED ? 'selected' : ''}`}
         data-cy="FilterLinkCompleted"
-        onClick={() => setFilter(Statys.COMPLETED)}
+        onClick={() => setFilter(Status.COMPLETED)}
       >
         Completed
       </a>

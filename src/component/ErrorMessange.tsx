@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useEffect } from 'react';
 
 interface Props {
@@ -17,17 +18,18 @@ export const ErrorMessange: React.FC<Props> = ({ message, onClose }) => {
   return (
     <div
       data-cy="ErrorNotification"
-      className={`notification is-danger is-light has-text-weight-normal ${
-        message ? '' : 'hidden'
-      }`}
+      className={classNames(
+        'notification is-danger is-light has-text-weight-normal',
+        {
+          hidden: !message,
+        },
+      )}
     >
       <button
         data-cy="HideErrorButton"
         type="button"
         className="delete"
-        onClick={() => {
-          onClose();
-        }}
+        onClick={onClose}
       />
       {/* show only one message at a time */}
       {message}

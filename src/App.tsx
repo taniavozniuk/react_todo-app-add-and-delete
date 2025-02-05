@@ -1,38 +1,31 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useRef, useState } from 'react';
-// import { UserWarning } from './UserWarning';
 import { deleteTodos, getTodos, postTodos } from './api/todos';
 import { Todo } from './types/Todo';
 import { USER_ID } from './api/todos';
 import { ErrorMessange } from './component/ErrorMessange';
-import { Statys } from './types/statys';
+import { Status } from './types/statys';
 import { TodoList } from './component/TodoList';
 import { Footer } from './component/Footer';
+import { TempTodo } from './component/TempTodo';
 
 export const App: React.FC = () => {
-  // if (!USER_ID) {
-  //   return <UserWarning />;
-  // }
-
   const [title, setTitle] = useState('');
   const [error, setError] = useState('');
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [filter, setFilter] = useState<Statys>(Statys.ALL);
+  const [filter, setFilter] = useState<Status>(Status.ALL);
   const [isLoading, setIsLoading] = useState(false);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [itemLeft, setItemLeft] = useState(0);
   const [loadingTodoId, setLoadingTodoId] = useState<number | null>(null);
 
-  function loadTodos() {
-    // setIsLoadTodos(true);
-
+  const loadTodos = () => {
     getTodos()
       .then(setTodos)
       .catch(() => setError('Unable to load todos'));
-    // .finally(() => setIsLoadTodos(false));
-  }
+  };
 
   useEffect(() => {
     loadTodos();
@@ -48,7 +41,6 @@ export const App: React.FC = () => {
     setItemLeft(todos.filter(todo => !todo.completed).length);
   }, [todos]);
 
-  //додававння title, post
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -69,7 +61,6 @@ export const App: React.FC = () => {
 
     setTempTodo(newTempTodo);
 
-    //post
     postTodos(newTempTodo)
       .then(createdTodo => {
         setTodos(prevTodos => [...prevTodos, createdTodo]);
@@ -83,7 +74,7 @@ export const App: React.FC = () => {
       })
       .finally(() => {
         setIsLoading(false);
-        setTempTodo(null); //очищую temp після завершення
+        setTempTodo(null);
       });
   };
 
@@ -103,7 +94,6 @@ export const App: React.FC = () => {
         setError('');
       })
       .catch(() => {
-        // setTodos(prevTodos => [...prevTodos, todoToDelete]);
         setError('Unable to delete a todo');
       })
       .finally(() => {
@@ -112,7 +102,7 @@ export const App: React.FC = () => {
 
         setTimeout(() => {
           inputRef.current?.focus();
-        }, 0);
+        }, 3000);
       });
   };
 
@@ -139,7 +129,6 @@ export const App: React.FC = () => {
     }, 0);
   };
 
-  // стан todos
   const toggleTodo = (id: number) => {
     setTodos(prevTodos =>
       prevTodos.map(todo =>
@@ -148,13 +137,12 @@ export const App: React.FC = () => {
     );
   };
 
-  // фільтрує
   const filteredTodos = todos.filter(todo => {
-    if (filter === Statys.ACTIVE) {
+    if (filter === Status.ACTIVE) {
       return !todo.completed;
     }
 
-    if (filter === Statys.COMPLETED) {
+    if (filter === Status.COMPLETED) {
       return todo.completed;
     }
 
@@ -180,7 +168,6 @@ export const App: React.FC = () => {
               data-cy="NewTodoField"
               type="text"
               className="todoapp__new-todo focused"
-              // className="todoapp__new-todo focused"
               placeholder="Title should not be empty"
               value={title}
               onChange={handleTitleChange}
@@ -197,27 +184,8 @@ export const App: React.FC = () => {
           loadingTodoId={loadingTodoId}
         />
 
-        {tempTodo && (
-          <div data-cy="Todo" className="todo">
-            <label className="todo__status-label">
-              <input
-                data-cy="TodoStatus"
-                type="checkbox"
-                className="todo__status"
-              />
-            </label>{' '}
-            <span data-cy="TodoTitle" className="todo__title">
-              {tempTodo.title}
-            </span>
-            <div data-cy="TodoLoader" className="modal overlay is-active">
-              <div className="modal-background has-background-white-ter" />
-              <div className="loader" />
-            </div>
-          </div>
-          // className={classNames('modal overlay', {
-          //             'is-active': loadingTodoId === 0,
-          //           // })}
-        )}
+        {tempTodo && <TempTodo tempTodo={tempTodo} />}
+
         {/* Hide the footer if there are no todos */}
         {todos.length > 0 && (
           <Footer
@@ -236,12 +204,3 @@ export const App: React.FC = () => {
     </div>
   );
 };
-// Unable to load todos
-// <br />
-// Title should not be empty
-// <br />
-// Unable to add a todo
-// <br />
-// Unable to delete a todo
-// <br />
-// Unable to update a todo
