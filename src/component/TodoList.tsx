@@ -6,7 +6,7 @@ interface Props {
   filteredTodos: Todo[];
   toggleTodo: (id: number) => void;
   handleDelete: (id: number) => void;
-  loadingTodoId: number | null;
+  loadingTodoId: number[];
 }
 
 export const TodoList: React.FC<Props> = ({

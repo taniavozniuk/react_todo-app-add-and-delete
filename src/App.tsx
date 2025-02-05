@@ -19,8 +19,7 @@ export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [itemLeft, setItemLeft] = useState(0);
-  const [loadingTodoId, setLoadingTodoId] = useState<number | null>(null);
+  const [loadingTodoId, setLoadingTodoId] = useState<number[]>([]);
 
   const loadTodos = () => {
     getTodos()
@@ -37,10 +36,6 @@ export const App: React.FC = () => {
       inputRef.current.focus();
     }
   }, [tempTodo]);
-
-  useEffect(() => {
-    setItemLeft(todos.filter(todo => !todo.completed).length);
-  }, [todos]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -80,7 +75,7 @@ export const App: React.FC = () => {
   };
 
   const handleDelete = (id: number) => {
-    setLoadingTodoId(id);
+    setLoadingTodoId(prev => [...prev, id]);
     setIsLoading(true);
     setError('');
     const todoDelete = todos.find(todo => todo.id === id);
@@ -99,7 +94,7 @@ export const App: React.FC = () => {
       })
       .finally(() => {
         setIsLoading(false);
-        setLoadingTodoId(null);
+        setLoadingTodoId(prev => [...prev, id]);
 
         setTimeout(() => {
           inputRef.current?.focus();
@@ -149,6 +144,8 @@ export const App: React.FC = () => {
 
     return true;
   });
+
+  const itemLeft = todos.filter(todo => !todo.completed).length;
 
   return (
     <div className="todoapp">
