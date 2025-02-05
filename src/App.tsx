@@ -122,7 +122,7 @@ export const App: React.FC = () => {
 
     setTimeout(() => {
       inputRef.current?.focus();
-    }, 0);
+    }, 3000);
   };
 
   const toggleTodo = (id: number) => {
